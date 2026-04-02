@@ -28,11 +28,23 @@ function createWindow() {
 
   mainWindow.loadFile('index.html');
 
-  // Rastreia cursor a ~40fps e envia posição + bounds da janela ao renderer
+  // Rastreia cursor a ~40fps:
+  // - envia posição ao renderer para eye tracking
+  // - gerencia setIgnoreMouseEvents automaticamente pelo bounds da janela
+  //   (garante que clique direito sempre funciona quando cursor está sobre o robô)
   setInterval(() => {
     if (!mainWindow || mainWindow.isDestroyed()) return;
     const cursor = screen.getCursorScreenPoint();
     const bounds = mainWindow.getBounds();
+
+    const overWindow =
+      cursor.x >= bounds.x && cursor.x <= bounds.x + bounds.width &&
+      cursor.y >= bounds.y && cursor.y <= bounds.y + bounds.height;
+
+    // false = captura mouse (hover/clique funcionam)
+    // true + forward = cliques passam pro desktop, mas mousemove é encaminhado
+    mainWindow.setIgnoreMouseEvents(!overWindow, { forward: true });
+
     mainWindow.webContents.send('cursor-pos', {
       cursorX: cursor.x,
       cursorY: cursor.y,

@@ -368,8 +368,6 @@ window.robotAPI.onStateChange((data) => {
 // ── Controles ──
 els.btnClose.addEventListener('click', (e) => { e.stopPropagation(); window.robotAPI.close(); });
 document.addEventListener('contextmenu', (e) => { e.preventDefault(); window.robotAPI.contextMenu(); });
-els.robotWrap.addEventListener('mouseenter', () => window.robotAPI.setIgnoreMouse(false));
-els.robotWrap.addEventListener('mouseleave', () => window.robotAPI.setIgnoreMouse(true));
 
 // ── Init ──
 applyState('idle');
