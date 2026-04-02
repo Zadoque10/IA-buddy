@@ -18,6 +18,7 @@ const els = {
   legL:         document.getElementById('leg-l'),
   legR:         document.getElementById('leg-r'),
   chestIcon:    document.getElementById('chest-icon'),
+  chestPrompt:  document.getElementById('chest-prompt'),
   visorText:    document.getElementById('visor-text'),
   label:        document.getElementById('status-label'),
   robotWrap:    document.getElementById('robot-wrap'),
@@ -28,10 +29,10 @@ const els = {
 const STATES = {
   idle: {
     visorText:       '>_',
-    visorColor:      '#4ADE80',   // verde terminal
-    antennaColor:    '#3B82F6',
+    visorColor:      '#F97316',   // laranja Claude Code
+    antennaColor:    '#F97316',
     blush:           0,
-    chest:           '🤖',
+    chest:           null,        // null = mostra prompt >_ no peito
     eyelidL:         6,
     eyelidR:         6,
     pupilOffset:     { x: 0, y: 0 },
@@ -45,7 +46,7 @@ const STATES = {
   },
   thinking: {
     visorText:       '...',
-    visorColor:      '#A78BFA',   // roxo
+    visorColor:      '#A78BFA',
     antennaColor:    '#A78BFA',
     blush:           0,
     chest:           '💭',
@@ -79,8 +80,8 @@ const STATES = {
   },
   working: {
     visorText:       'run',
-    visorColor:      '#F59E0B',   // âmbar
-    antennaColor:    '#F59E0B',
+    visorColor:      '#EA580C',   // laranja escuro
+    antennaColor:    '#F97316',
     blush:           0,
     chest:           '⚙️',
     eyelidL:         0,
@@ -181,8 +182,15 @@ function applyState(name) {
   els.legL.style.transform  = `rotate(${s.legRotL}deg)`;
   els.legR.style.transform  = `rotate(${s.legRotR}deg)`;
 
-  // Ícone do peito
-  els.chestIcon.textContent = s.chest;
+  // Peito: null = mostra prompt ">_" (idle), string = emoji
+  if (s.chest === null) {
+    els.chestIcon.setAttribute('opacity', '0');
+    els.chestPrompt.setAttribute('opacity', '1');
+  } else {
+    els.chestIcon.textContent = s.chest;
+    els.chestIcon.setAttribute('opacity', '1');
+    els.chestPrompt.setAttribute('opacity', '0');
+  }
 
   // Label
   showLabel(s.label);

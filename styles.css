@@ -25,7 +25,7 @@ html, body {
   height: 308px;
   position: relative;
   filter:
-    drop-shadow(0 10px 28px rgba(30, 58, 138, 0.40))
+    drop-shadow(0 10px 28px rgba(249, 115, 22, 0.40))
     drop-shadow(0  3px  8px rgba(0,   0,   0,  0.30));
   cursor: grab;
 }
@@ -71,12 +71,12 @@ html, body {
 
 /* Label de estado */
 #status-label {
-  font-family: 'Segoe UI', 'Consolas', monospace;
+  font-family: 'Courier New', 'Consolas', monospace;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
   text-shadow: 0 1px 4px rgba(0,0,0,0.7);
-  background: rgba(30, 58, 138, 0.80);
+  background: rgba(154, 52, 18, 0.85);
   backdrop-filter: blur(6px);
   padding: 3px 12px;
   border-radius: 20px;
@@ -84,7 +84,7 @@ html, body {
   transition: opacity 0.5s;
   -webkit-app-region: no-drag;
   pointer-events: none;
-  border: 1px solid rgba(96, 165, 250, 0.3);
+  border: 1px solid rgba(251, 146, 60, 0.45);
 }
 
 /* ════ ANIMAÇÕES ════ */

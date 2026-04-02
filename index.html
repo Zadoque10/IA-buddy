@@ -12,134 +12,147 @@
   <div id="robot-wrap">
     <svg id="robot-svg" viewBox="0 0 200 310" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <!-- Clip visor e brilho à forma da cabeça -->
+        <!-- Clip viseira à forma da cabeça -->
         <clipPath id="head-clip">
           <ellipse cx="100" cy="84" rx="62" ry="59"/>
         </clipPath>
 
-        <!-- Gradiente branco 3D (corpo/cabeça) -->
+        <!-- Gradiente corpo — branco com toque laranja (Claude Code) -->
         <radialGradient id="white-grad" cx="35%" cy="28%" r="65%">
           <stop offset="0%"   stop-color="#FFFFFF"/>
-          <stop offset="55%"  stop-color="#EFF6FF"/>
-          <stop offset="100%" stop-color="#BFDBFE"/>
+          <stop offset="55%"  stop-color="#FFF7ED"/>
+          <stop offset="100%" stop-color="#FDBA74"/>
         </radialGradient>
 
-        <!-- Gradiente viseira -->
+        <!-- Gradiente viseira (escuro, neutro) -->
         <linearGradient id="visor-grad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stop-color="#1E3A8A"/>
-          <stop offset="100%" stop-color="#0A1628"/>
+          <stop offset="0%"   stop-color="#292524"/>
+          <stop offset="100%" stop-color="#1C1917"/>
         </linearGradient>
 
-        <!-- Gradiente articulações -->
+        <!-- Gradiente articulações — laranja Claude Code -->
         <radialGradient id="joint-grad" cx="35%" cy="30%" r="65%">
-          <stop offset="0%"   stop-color="#3B82F6"/>
-          <stop offset="100%" stop-color="#1E3A8A"/>
+          <stop offset="0%"   stop-color="#F97316"/>
+          <stop offset="100%" stop-color="#9A3412"/>
         </radialGradient>
 
-        <!-- Glow para textos e antena -->
+        <!-- Glow textos -->
         <filter id="text-glow" x="-40%" y="-40%" width="180%" height="180%">
           <feGaussianBlur stdDeviation="2.5" result="blur"/>
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
+        <!-- Glow antena -->
         <filter id="soft-glow" x="-60%" y="-60%" width="220%" height="220%">
           <feGaussianBlur stdDeviation="5" result="blur"/>
           <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
       </defs>
 
-      <!-- ══ GRUPO PRINCIPAL (animado) ══ -->
+      <!-- ══ GRUPO PRINCIPAL ══ -->
       <g id="robot-group" class="anim-float">
 
         <!-- ── PÉS ── -->
         <rect x="52" y="268" width="48" height="24" rx="12"
-              fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="2.5"/>
+              fill="url(#white-grad)" stroke="#1C1917" stroke-width="2.5"/>
         <rect x="100" y="268" width="48" height="24" rx="12"
-              fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="2.5"/>
-        <!-- Shine nos pés -->
-        <ellipse cx="66" cy="273" rx="10" ry="4" fill="white" opacity="0.5"/>
+              fill="url(#white-grad)" stroke="#1C1917" stroke-width="2.5"/>
+        <ellipse cx="66"  cy="273" rx="10" ry="4" fill="white" opacity="0.5"/>
         <ellipse cx="114" cy="273" rx="10" ry="4" fill="white" opacity="0.5"/>
 
         <!-- ── PERNAS ── -->
         <rect id="leg-l" x="65" y="232" width="30" height="44" rx="13"
-              fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="2.5"
+              fill="url(#white-grad)" stroke="#1C1917" stroke-width="2.5"
               style="transform-origin:80px 232px;"/>
         <rect id="leg-r" x="105" y="232" width="30" height="44" rx="13"
-              fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="2.5"
+              fill="url(#white-grad)" stroke="#1C1917" stroke-width="2.5"
               style="transform-origin:120px 232px;"/>
 
         <!-- ── ARTICULAÇÕES DO QUADRIL ── -->
-        <circle cx="80"  cy="234" r="11" fill="url(#joint-grad)" stroke="#0A1628" stroke-width="1.5"/>
-        <circle cx="120" cy="234" r="11" fill="url(#joint-grad)" stroke="#0A1628" stroke-width="1.5"/>
-        <circle cx="77"  cy="231" r="4"  fill="#93C5FD" opacity="0.7"/>
-        <circle cx="117" cy="231" r="4"  fill="#93C5FD" opacity="0.7"/>
+        <circle cx="80"  cy="234" r="11" fill="url(#joint-grad)" stroke="#1C1917" stroke-width="1.5"/>
+        <circle cx="120" cy="234" r="11" fill="url(#joint-grad)" stroke="#1C1917" stroke-width="1.5"/>
+        <circle cx="77"  cy="231" r="4"  fill="#FDBA74" opacity="0.7"/>
+        <circle cx="117" cy="231" r="4"  fill="#FDBA74" opacity="0.7"/>
 
         <!-- ── CORPO ── -->
         <rect x="62" y="152" width="76" height="82" rx="30"
-              fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="2.5"/>
-        <!-- Painel central do peito -->
-        <circle cx="100" cy="191" r="20" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1.8"/>
-        <text id="chest-icon" x="100" y="198"
+              fill="url(#white-grad)" stroke="#1C1917" stroke-width="2.5"/>
+
+        <!-- Painel do peito — borda laranja -->
+        <circle cx="100" cy="191" r="20" fill="#FFF7ED" stroke="#FB923C" stroke-width="1.8"/>
+
+        <!-- Símbolo Claude Code no peito (idle): "> _" -->
+        <text id="chest-prompt"
+              x="100" y="195"
               text-anchor="middle" dominant-baseline="middle"
-              font-size="20" style="pointer-events:none;">🤖</text>
+              font-family="'Courier New', monospace" font-size="11" font-weight="bold"
+              fill="#F97316" filter="url(#text-glow)"
+              style="pointer-events:none;">&gt;_</text>
+
+        <!-- Ícone emoji (para outros estados) -->
+        <text id="chest-icon"
+              x="100" y="198"
+              text-anchor="middle" dominant-baseline="middle"
+              font-size="20" opacity="0"
+              style="pointer-events:none;">⚙️</text>
 
         <!-- ── BRAÇOS ── -->
         <rect id="arm-l" x="36" y="170" width="28" height="64" rx="14"
-              fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="2.5"
+              fill="url(#white-grad)" stroke="#1C1917" stroke-width="2.5"
               style="transform-origin:50px 170px;"/>
         <rect id="arm-r" x="136" y="170" width="28" height="64" rx="14"
-              fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="2.5"
+              fill="url(#white-grad)" stroke="#1C1917" stroke-width="2.5"
               style="transform-origin:150px 170px;"/>
 
         <!-- ── ARTICULAÇÕES DOS OMBROS ── -->
-        <circle cx="63"  cy="172" r="12" fill="url(#joint-grad)" stroke="#0A1628" stroke-width="1.5"/>
-        <circle cx="137" cy="172" r="12" fill="url(#joint-grad)" stroke="#0A1628" stroke-width="1.5"/>
-        <circle cx="60"  cy="169" r="4.5" fill="#93C5FD" opacity="0.7"/>
-        <circle cx="134" cy="169" r="4.5" fill="#93C5FD" opacity="0.7"/>
+        <circle cx="63"  cy="172" r="12" fill="url(#joint-grad)" stroke="#1C1917" stroke-width="1.5"/>
+        <circle cx="137" cy="172" r="12" fill="url(#joint-grad)" stroke="#1C1917" stroke-width="1.5"/>
+        <circle cx="60"  cy="169" r="4.5" fill="#FDBA74" opacity="0.7"/>
+        <circle cx="134" cy="169" r="4.5" fill="#FDBA74" opacity="0.7"/>
 
         <!-- ── PUNHOS ── -->
         <circle id="fist-l" cx="50" cy="241" r="15"
-                fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="2.5"/>
+                fill="url(#white-grad)" stroke="#1C1917" stroke-width="2.5"/>
         <circle id="fist-r" cx="150" cy="241" r="15"
-                fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="2.5"/>
+                fill="url(#white-grad)" stroke="#1C1917" stroke-width="2.5"/>
         <circle cx="46"  cy="237" r="5" fill="white" opacity="0.55"/>
         <circle cx="146" cy="237" r="5" fill="white" opacity="0.55"/>
 
         <!-- ── PESCOÇO ── -->
         <ellipse cx="100" cy="154" rx="18" ry="11"
-                 fill="url(#joint-grad)" stroke="#0A1628" stroke-width="1.5"/>
-        <ellipse cx="100" cy="152" rx="9" ry="4.5" fill="#93C5FD" opacity="0.5"/>
+                 fill="url(#joint-grad)" stroke="#1C1917" stroke-width="1.5"/>
+        <ellipse cx="100" cy="152" rx="9" ry="4.5" fill="#FDBA74" opacity="0.5"/>
 
-        <!-- ── CABEÇA (desenhada por cima do corpo) ── -->
+        <!-- ── CABEÇA ── -->
         <ellipse id="head"
                  cx="100" cy="84" rx="62" ry="59"
-                 fill="url(#white-grad)" stroke="#1E1B4B" stroke-width="3"/>
+                 fill="url(#white-grad)" stroke="#1C1917" stroke-width="3"/>
 
-        <!-- ── VISEIRA (faixa escura, clipada à cabeça) ── -->
+        <!-- ── VISEIRA ── -->
         <rect x="38" y="62" width="124" height="52"
               fill="url(#visor-grad)" clip-path="url(#head-clip)"/>
-        <!-- Reflexo da viseira -->
+        <!-- Reflexo -->
         <rect x="42" y="64" width="55" height="7" rx="3.5"
               fill="white" opacity="0.10" clip-path="url(#head-clip)"/>
 
-        <!-- ── LENTES / OLHOS (dentro da viseira) ── -->
+        <!-- ── LENTES / OLHOS ── -->
         <ellipse id="eye-white-l" cx="73" cy="85" rx="16" ry="21"
-                 fill="#EFF6FF" clip-path="url(#head-clip)"/>
+                 fill="#FFF7ED" clip-path="url(#head-clip)"/>
         <ellipse id="eye-white-r" cx="127" cy="85" rx="16" ry="21"
-                 fill="#EFF6FF" clip-path="url(#head-clip)"/>
+                 fill="#FFF7ED" clip-path="url(#head-clip)"/>
 
         <!-- Pupilas -->
         <g id="pupils-l" style="transform-origin:73px 85px; transition:transform 0.3s ease;">
-          <circle id="pupil-l"  cx="73"  cy="88" r="10" fill="#0A1628"/>
-          <circle id="dot-l"    cx="77"  cy="83" r="4"  fill="white" opacity="0.75"/>
-          <circle               cx="78"  cy="84" r="1.5" fill="white"/>
+          <circle id="pupil-l" cx="73"  cy="88" r="10" fill="#1C1917"/>
+          <circle              cx="77"  cy="83" r="4"  fill="white" opacity="0.75"/>
+          <circle              cx="78"  cy="84" r="1.5" fill="white"/>
         </g>
         <g id="pupils-r" style="transform-origin:127px 85px; transition:transform 0.3s ease;">
-          <circle id="pupil-r"  cx="127" cy="88" r="10" fill="#0A1628"/>
-          <circle id="dot-r"    cx="131" cy="83" r="4"  fill="white" opacity="0.75"/>
-          <circle               cx="132" cy="84" r="1.5" fill="white"/>
+          <circle id="pupil-r" cx="127" cy="88" r="10" fill="#1C1917"/>
+          <circle              cx="131" cy="83" r="4"  fill="white" opacity="0.75"/>
+          <circle              cx="132" cy="84" r="1.5" fill="white"/>
         </g>
 
-        <!-- Pálpebras (sobrepõem os olhos) -->
+        <!-- Pálpebras -->
         <rect id="eyelid-l" x="57" y="64" width="32" height="0" rx="5"
               fill="url(#visor-grad)" clip-path="url(#head-clip)"
               style="transform-origin:73px 64px;"/>
@@ -147,24 +160,23 @@
               fill="url(#visor-grad)" clip-path="url(#head-clip)"
               style="transform-origin:127px 64px;"/>
 
-        <!-- ── TEXTO DA VISEIRA (indicador de estado) ── -->
+        <!-- ── TEXTO DA VISEIRA ── -->
         <text id="visor-text"
               x="100" y="110"
               text-anchor="middle"
               font-family="'Courier New', 'Consolas', monospace"
-              font-size="9.5"
-              font-weight="bold"
-              fill="#4ADE80"
+              font-size="9.5" font-weight="bold"
+              fill="#F97316"
               filter="url(#text-glow)"
-              clip-path="url(#head-clip)">>_</text>
+              clip-path="url(#head-clip)">&gt;_</text>
 
-        <!-- ── FONE (direita da cabeça) ── -->
-        <circle cx="158" cy="84" r="10" fill="url(#joint-grad)" stroke="#0A1628" stroke-width="2"/>
-        <circle cx="158" cy="84" r="4.5" fill="#3B82F6" opacity="0.8"/>
+        <!-- ── FONE (direita) ── -->
+        <circle cx="158" cy="84" r="10" fill="url(#joint-grad)" stroke="#1C1917" stroke-width="2"/>
+        <circle cx="158" cy="84" r="4.5" fill="#F97316" opacity="0.8"/>
         <line x1="158" y1="74" x2="158" y2="62"
-              stroke="#1E3A8A" stroke-width="3" stroke-linecap="round"/>
+              stroke="#9A3412" stroke-width="3" stroke-linecap="round"/>
 
-        <!-- ── BRILHO DA CABEÇA (glint 3D) ── -->
+        <!-- ── BRILHO CABEÇA ── -->
         <ellipse cx="70" cy="46" rx="22" ry="12"
                  fill="white" opacity="0.30"
                  transform="rotate(-25,70,46)"
@@ -172,24 +184,22 @@
 
         <!-- ── ANTENA ── -->
         <line x1="100" y1="25" x2="100" y2="38"
-              stroke="#1E3A8A" stroke-width="3.5" stroke-linecap="round"/>
-        <!-- Glow da antena -->
+              stroke="#9A3412" stroke-width="3.5" stroke-linecap="round"/>
         <circle id="antenna-glow" cx="100" cy="17" r="14"
-                fill="#60A5FA" opacity="0.25" filter="url(#soft-glow)"/>
-        <!-- Bola da antena -->
+                fill="#FB923C" opacity="0.25" filter="url(#soft-glow)"/>
         <circle id="antenna-ball" cx="100" cy="17" r="9"
-                fill="#3B82F6" stroke="#1E1B4B" stroke-width="1.5"/>
+                fill="#F97316" stroke="#1C1917" stroke-width="1.5"/>
         <circle cx="97" cy="14" r="3.5" fill="white" opacity="0.65"/>
 
-        <!-- Bochechas (blush) -->
+        <!-- Bochechas -->
         <ellipse id="blush-l" cx="50"  cy="108" rx="12" ry="7" fill="#FCA5A5" opacity="0"/>
         <ellipse id="blush-r" cx="150" cy="108" rx="12" ry="7" fill="#FCA5A5" opacity="0"/>
 
-      </g><!-- /robot-group -->
+      </g>
     </svg>
   </div>
 
-  <div id="status-label">Olá!</div>
+  <div id="status-label">claude &gt;_</div>
 </div>
 
 <script src="renderer.js"></script>
