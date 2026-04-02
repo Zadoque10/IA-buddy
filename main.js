@@ -3,6 +3,7 @@ const http = require('http');
 const path = require('path');
 
 let mainWindow;
+let configWindow;
 
 function createWindow() {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
@@ -80,9 +81,44 @@ ipcMain.on('set-ignore-mouse', (event, ignore) => {
   if (mainWindow) mainWindow.setIgnoreMouseEvents(ignore, { forward: true });
 });
 
+function openConfigWindow() {
+  if (configWindow && !configWindow.isDestroyed()) {
+    configWindow.focus();
+    return;
+  }
+  configWindow = new BrowserWindow({
+    width: 360,
+    height: 500,
+    title: 'Claude Buddy — Reações',
+    resizable: false,
+    minimizable: false,
+    maximizable: false,
+    alwaysOnTop: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'config-preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
+  });
+  configWindow.setMenuBarVisibility(false);
+  configWindow.loadFile('config.html');
+  configWindow.on('closed', () => { configWindow = null; });
+}
+
+ipcMain.on('open-config', openConfigWindow);
+
+// Encaminha estado de teste ao robô
+ipcMain.on('test-state', (_, state) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('state-change', { state });
+  }
+});
+
 ipcMain.on('show-context-menu', () => {
   const menu = Menu.buildFromTemplate([
     { label: 'Claude Buddy v1.0', enabled: false },
+    { type: 'separator' },
+    { label: '⚙  Configurações / Reações', click: openConfigWindow },
     { type: 'separator' },
     { label: 'Fechar', click: () => app.quit() },
   ]);

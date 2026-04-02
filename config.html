@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Claude Buddy — Reações</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1C1917;
+      color: #E7E5E4;
+      width: 360px;
+      user-select: none;
+    }
+
+    header {
+      background: #292524;
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid #3C3330;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    header .logo {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #F97316;
+    }
+    header .subtitle {
+      font-size: 11px;
+      color: #78716C;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .card {
+      background: #292524;
+      border: 1.5px solid #3C3330;
+      border-radius: 12px;
+      padding: 14px 12px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .card:hover {
+      border-color: #F97316;
+      background: #2C2220;
+      transform: translateY(-1px);
+    }
+    .card:active {
+      transform: scale(0.97);
+    }
+    .card.active {
+      border-color: #F97316;
+      background: #2C1810;
+      box-shadow: 0 0 12px rgba(249,115,22,0.25);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-emoji { font-size: 26px; line-height: 1; }
+    .card-visor {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #1C1917;
+      border: 1px solid #3C3330;
+    }
+
+    .card-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #E7E5E4;
+      margin-top: 2px;
+    }
+    .card-desc {
+      font-size: 10.5px;
+      color: #78716C;
+      line-height: 1.4;
+    }
+
+    .card-btn {
+      margin-top: 6px;
+      padding: 5px 0;
+      border-radius: 7px;
+      border: none;
+      background: #3C3330;
+      color: #D6D3D1;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      width: 100%;
+    }
+    .card:hover .card-btn {
+      background: #F97316;
+      color: #fff;
+    }
+
+    footer {
+      padding: 10px 14px 14px;
+      border-top: 1px solid #292524;
+      font-size: 10px;
+      color: #57534E;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="logo">&gt;_ Claude Buddy</div>
+      <div class="subtitle">Clique em uma reação para testar</div>
+    </div>
+  </header>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>Clique direito no robô → Configurações</footer>
+
+  <script>
+    const REACTIONS = [
+      {
+        state: 'idle',
+        emoji: '🤖',
+        visor: '>_',
+        visorColor: '#F97316',
+        label: 'Idle',
+        desc: 'Aguardando. Olhos seguem o cursor.',
+      },
+      {
+        state: 'thinking',
+        emoji: '💭',
+        visor: '...',
+        visorColor: '#A78BFA',
+        label: 'Pensando',
+        desc: 'Pupilas giram, antena roxa pulsa.',
+      },
+      {
+        state: 'reading',
+        emoji: '📖',
+        visor: 'cat',
+        visorColor: '#34D399',
+        label: 'Lendo',
+        desc: 'Olhos para a esquerda, corpo balança.',
+      },
+      {
+        state: 'working',
+        emoji: '⚙️',
+        visor: 'run',
+        visorColor: '#EA580C',
+        label: 'Trabalhando',
+        desc: 'Braços abertos, corpo quicando.',
+      },
+      {
+        state: 'success',
+        emoji: '⭐',
+        visor: '[OK]',
+        visorColor: '#4ADE80',
+        label: 'Pronto!',
+        desc: 'Braços pra cima, pula, estrelas voam.',
+      },
+      {
+        state: 'error',
+        emoji: '⚠️',
+        visor: 'ERR',
+        visorColor: '#EF4444',
+        label: 'Erro',
+        desc: 'Expressão preocupada, corpo treme.',
+      },
+    ];
+
+    const grid = document.getElementById('grid');
+    let activeCard = null;
+
+    REACTIONS.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-top">
+          <span class="card-emoji">${r.emoji}</span>
+          <span class="card-visor" style="color:${r.visorColor}">${r.visor}</span>
+        </div>
+        <div class="card-label">${r.label}</div>
+        <div class="card-desc">${r.desc}</div>
+        <button class="card-btn">▶ Testar</button>
+      `;
+
+      card.addEventListener('click', () => {
+        window.configAPI.testState(r.state);
+
+        if (activeCard) activeCard.classList.remove('active');
+        card.classList.add('active');
+        activeCard = card;
+
+        // Remove highlight após 4.5s (mesmo tempo do robô)
+        setTimeout(() => card.classList.remove('active'), 4500);
+      });
+
+      grid.appendChild(card);
+    });
+  </script>
+</body>
+</html>
