@@ -138,6 +138,75 @@ let idleTimeout = null;
 let labelTimeout = null;
 let thinkAnimInterval = null;
 
+// ── Rastreamento do cursor ──
+// Posição suavizada (interpolada) dos olhos
+const eyeL  = { svgX: 73,  svgY: 85 };  // centro da lente esquerda no SVG
+const eyeR  = { svgX: 127, svgY: 85 };  // centro da lente direita no SVG
+const MAX_TRAVEL = 5.5;                  // raio máximo de deslocamento da pupila
+
+// Posição-alvo e posição atual suavizada (lerp)
+const pupil = {
+  targetL:  { x: 0, y: 0 },
+  targetR:  { x: 0, y: 0 },
+  currentL: { x: 0, y: 0 },
+  currentR: { x: 0, y: 0 },
+};
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+// Calcula o offset da pupila dado centro do olho (em px de tela) e cursor
+function calcOffset(eyeScreenX, eyeScreenY, cursorX, cursorY) {
+  const dx = cursorX - eyeScreenX;
+  const dy = cursorY - eyeScreenY;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  if (dist < 1) return { x: 0, y: 0 };
+  // Influência: satura em ~120px de distância
+  const influence = Math.min(dist / 120, 1);
+  return {
+    x: (dx / dist) * influence * MAX_TRAVEL,
+    y: (dy / dist) * influence * MAX_TRAVEL,
+  };
+}
+
+// Loop de animação das pupilas (roda sempre, 60fps)
+function pupilLoop() {
+  const LERP_SPEED = 0.10;
+  pupil.currentL.x = lerp(pupil.currentL.x, pupil.targetL.x, LERP_SPEED);
+  pupil.currentL.y = lerp(pupil.currentL.y, pupil.targetL.y, LERP_SPEED);
+  pupil.currentR.x = lerp(pupil.currentR.x, pupil.targetR.x, LERP_SPEED);
+  pupil.currentR.y = lerp(pupil.currentR.y, pupil.targetR.y, LERP_SPEED);
+
+  // Só aplica o tracking se o estado não tiver CSS animation nos pupilas
+  if (currentState !== 'thinking') {
+    const lx = pupil.currentL.x.toFixed(2);
+    const ly = pupil.currentL.y.toFixed(2);
+    const rx = pupil.currentR.x.toFixed(2);
+    const ry = pupil.currentR.y.toFixed(2);
+    els.pupilsL.style.transform = `translate(${lx}px,${ly}px)`;
+    els.pupilsR.style.transform = `translate(${rx}px,${ry}px)`;
+  }
+  requestAnimationFrame(pupilLoop);
+}
+
+// Recebe posição do cursor do processo main (a cada ~25ms)
+window.robotAPI.onCursorPos(({ cursorX, cursorY, winX, winY }) => {
+  if (currentState === 'thinking') return;
+
+  // Origem do SVG em coordenadas de tela:
+  // robot-wrap tem offset de ~10px da esquerda e ~2px do topo dentro da janela
+  const svgOriginX = winX + 10;
+  const svgOriginY = winY + 2;
+
+  // Centro de cada lente em coordenadas de tela
+  const eyeLscreenX = svgOriginX + eyeL.svgX;
+  const eyeLscreenY = svgOriginY + eyeL.svgY;
+  const eyeRscreenX = svgOriginX + eyeR.svgX;
+  const eyeRscreenY = svgOriginY + eyeR.svgY;
+
+  pupil.targetL = calcOffset(eyeLscreenX, eyeLscreenY, cursorX, cursorY);
+  pupil.targetR = calcOffset(eyeRscreenX, eyeRscreenY, cursorX, cursorY);
+});
+
 // ── Aplicar estado ──
 function applyState(name) {
   const s = STATES[name] || STATES.idle;
@@ -160,14 +229,18 @@ function applyState(name) {
   animEyelid(els.eyelidL, s.eyelidL);
   animEyelid(els.eyelidR, s.eyelidR);
 
-  // Pupilas
-  els.pupilsL.style.transform = `translate(${s.pupilOffset.x}px,${s.pupilOffset.y}px)`;
-  els.pupilsR.style.transform = `translate(${s.pupilOffset.x === 0 ? 0 : -s.pupilOffset.x}px,${s.pupilOffset.y}px)`;
+  // Pupilas: define target base do estado — o loop de tracking suaviza até lá
+  pupil.targetL = { x: s.pupilOffset.x,                                    y: s.pupilOffset.y };
+  pupil.targetR = { x: s.pupilOffset.x === 0 ? 0 : -s.pupilOffset.x,      y: s.pupilOffset.y };
 
-  // Animação de busca (thinking)
+  // Thinking: CSS animation nas pupilas (spin); zera target e entrega pro CSS
   clearInterval(thinkAnimInterval);
   els.pupilsL.classList.toggle('anim-thinking-pupils', s.thinkPupils);
   els.pupilsR.classList.toggle('anim-thinking-pupils', s.thinkPupils);
+  if (s.thinkPupils) {
+    pupil.targetL = { x: 0, y: 0 };
+    pupil.targetR = { x: 0, y: 0 };
+  }
 
   // Texto da viseira
   updateVisorText(s.visorText, s.visorColor, name === 'thinking');
@@ -301,3 +374,4 @@ els.robotWrap.addEventListener('mouseleave', () => window.robotAPI.setIgnoreMous
 // ── Init ──
 applyState('idle');
 startBlink();
+requestAnimationFrame(pupilLoop); // inicia loop de tracking suave

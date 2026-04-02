@@ -1,11 +1,10 @@
-const { app, BrowserWindow, ipcMain, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, screen } = require('electron');
 const http = require('http');
 const path = require('path');
 
 let mainWindow;
 
 function createWindow() {
-  const { screen } = require('electron');
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
   mainWindow = new BrowserWindow({
@@ -27,9 +26,22 @@ function createWindow() {
   });
 
   mainWindow.loadFile('index.html');
+
+  // Rastreia cursor a ~40fps e envia posição + bounds da janela ao renderer
+  setInterval(() => {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    const cursor = screen.getCursorScreenPoint();
+    const bounds = mainWindow.getBounds();
+    mainWindow.webContents.send('cursor-pos', {
+      cursorX: cursor.x,
+      cursorY: cursor.y,
+      winX: bounds.x,
+      winY: bounds.y,
+    });
+  }, 25);
 }
 
-// Servidor HTTP que recebe eventos dos hooks do Claude Code
+// Servidor HTTP — recebe eventos dos hooks do Claude Code
 const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
 

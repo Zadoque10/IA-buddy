@@ -41,9 +41,7 @@ html, body {
 #robot-svg #leg-l, #robot-svg #leg-r {
   transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-#robot-svg #pupils-l, #robot-svg #pupils-r {
-  transition: transform 0.3s ease;
-}
+/* pupilas: sem CSS transition — o lerp no JS cuida da suavização */
 
 /* Botão fechar */
 #btn-close {
