@@ -1,0 +1,23 @@
+{
+  "name": "claude-buddy",
+  "version": "1.0.0",
+  "description": "Mascote animado para o Claude Code",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.zadoque.claude-buddy",
+    "productName": "Claude Buddy",
+    "directories": { "output": "dist" },
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico"
+    }
+  }
+}
